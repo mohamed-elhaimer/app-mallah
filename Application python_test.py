@@ -12,33 +12,28 @@ class formMysql:
         self.root.title("BESTCHOICE OF MATERIALS")
         self.root.geometry("1980x1080")
         self.root.config(bg="white")
+
+        # Load data from Excel file
         self.data = pd.read_excel(
             "/Users/simo/Downloads/app-mallah/Application python_materiaux.xls"
         )
-        
-        # Ouvrir et redimensionner les images
-        img1 = Image.open(
+
+        # Open images
+        self.original_img1 = Image.open(
             "/Users/simo/Downloads/app-mallah/Application python_Interface.jpeg"
         )
-        img1 = img1.resize((1300, 800), Image.LANCZOS)
-        self.photo1 = ImageTk.PhotoImage(img1)
-
-        img3 = Image.open(
+        self.original_img3 = Image.open(
             "/Users/simo/Downloads/app-mallah/Application python_2019.11.01_logo_jesa_l_bluel_l_traits_de_coupe_rogne_-_copy.jpg"
-        )
-        img3 = img3.resize((200, 60), Image.LANCZOS)
-        self.photo3 = ImageTk.PhotoImage(img3)
+        ).resize((200, 60), Image.LANCZOS)
 
-        # Créer les widgets de label pour les images et les afficher
-        self.label1 = tk.Label(root, image=self.photo1)
-        self.label1.image = self.photo1
-        self.label1.place(x=0, y=0)
+        # Create label widgets for the images
+        self.label1 = tk.Label(root)
+        self.label1.grid(row=0, column=0, columnspan=3, sticky="nsew", padx=10, pady=10)
 
-        self.label3 = tk.Label(root, image=self.photo3)
-        self.label3.image = self.photo3
-        self.label3.place(x=1065, y=10)
+        self.label3 = tk.Label(root)
+        self.label3.grid(row=0, column=2, sticky="ne", padx=20, pady=20)
 
-        # Créer le bouton "Commencer" et le placer
+        # Create the "Commencer" button and place it
         button_start = tk.Button(
             root,
             text="Commencer",
@@ -47,8 +42,29 @@ class formMysql:
             fg="#000000",
             font=("Algeria", 20, "bold"),
         )
-        button_start.place(x=550, y=640)
+        button_start.grid(row=1, column=1, pady=20, sticky="ew")
+        root.grid_rowconfigure(0, weight=1)
+        root.grid_rowconfigure(1, weight=0)
+        root.grid_columnconfigure(0, weight=1)
+        root.grid_columnconfigure(1, weight=1)
+        root.grid_columnconfigure(2, weight=1)
+        self.root.bind("<Configure>", self.resize_images)
+    def resize_images(self, event):
+         # Resize img1
+        new_width1 = self.label1.winfo_width()
+        new_height1 = self.label1.winfo_height()
+        resized_img1 = self.original_img1.resize((new_width1, new_height1), Image.LANCZOS)
+        self.photo1 = ImageTk.PhotoImage(resized_img1)
+        self.label1.config(image=self.photo1)
+        self.label1.image = self.photo1
 
+        # Resize img3
+        new_width3 = 200
+        new_height3 = int(new_width3 * self.original_img3.height / self.original_img3.width)
+        resized_img3 = self.original_img3.resize((new_width3, new_height3), Image.LANCZOS)
+        self.photo3 = ImageTk.PhotoImage(resized_img3)
+        self.label3.config(image=self.photo3)
+        self.label3.image = self.photo3
     def open_new_window(self):
         new_window = tk.Toplevel(self.root)
 
